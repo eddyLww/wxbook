@@ -99,8 +99,13 @@ Page({
       if (res.result.success) {
         this.setData({ book: res.result.data, loading: false, aiLoading: false });
       } else {
-        wx.showToast({ title: res.result.msg || '加载失败', icon: 'none' });
-        this.setData({ loading: false, aiLoading: false });
+        wx.showToast({ title: res.result.msg || 'AI 解读失败', icon: 'none' });
+        // 如果原本是 placeholder 模式，失败后应该重置或允许重试
+        this.setData({ 
+          loading: false, 
+          aiLoading: false,
+          book: bookInfo ? { ...bookInfo, aiShortSummary: 'AI 解读暂时不可用，请稍后再试' } : null
+        });
       }
     } catch(err) {
       this.setData({ loading: false, aiLoading: false });
@@ -132,8 +137,12 @@ Page({
       return;
     }
 
-    if (!this.data.book) {
-      wx.showToast({ title: '书籍信息获取失败', icon: 'none' });
+    if (!this.data.book || !this.data.book.aiFullContent) {
+      wx.showToast({ title: '精读内容尚未就绪，请稍后', icon: 'none' });
+      // 尝试重新加载
+      if (!this.data.aiLoading) {
+        this.fetchBookDetail(this.data.bookId, this.data.book);
+      }
       return;
     }
 

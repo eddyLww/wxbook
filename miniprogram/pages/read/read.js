@@ -48,8 +48,9 @@ Page({
       this.setData({ book, loading: false });
     } else {
       this.setData({ loading: false });
-      wx.showToast({ title: '内容获取失败', icon: 'none' });
-      setTimeout(() => wx.navigateBack(), 1500);
+      console.error('Content missing for book:', bookId, book);
+      wx.showToast({ title: '精读内容解析中或获取失败', icon: 'none', duration: 2000 });
+      setTimeout(() => wx.navigateBack(), 2000);
     }
   },
 

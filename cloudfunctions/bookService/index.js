@@ -41,7 +41,18 @@ exports.main = async (event, context) => {
       const { bookId, bookInfo } = data;
       
       // 1. Check cache
-      let cacheRes = await db.collection('bookCache').where({ _id: bookId }).get();
+      let cacheRes;
+      try {
+        cacheRes = await db.collection('bookCache').where({ _id: bookId }).get();
+      } catch (err) {
+        if (err.errCode === -502005 || (err.message && err.message.includes('not exists'))) {
+          await db.createCollection('bookCache');
+          cacheRes = { data: [] };
+        } else {
+          throw err;
+        }
+      }
+
       if (cacheRes.data.length > 0) {
         // Increment view count
         await db.collection('bookCache').doc(bookId).update({ data: { viewCount: _.inc(1) } });
@@ -82,7 +93,12 @@ exports.main = async (event, context) => {
       };
 
       // 3. Save to cache
-      await db.collection('bookCache').add({ data: newBook });
+      try {
+        await db.collection('bookCache').doc(bookId).set({ data: newBook });
+      } catch (err) {
+        console.error('Save to cache failed:', err);
+        // Even if save fails, we can still return the content to user
+      }
 
       return { success: true, data: newBook };
 

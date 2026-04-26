@@ -57,26 +57,51 @@ exports.main = async (event, context) => {
       const response = await axios.post(LLM_API_URL, {
         model: 'deepseek-chat',
         messages: [{ role: 'user', content: prompt }],
-        temperature: 0.7
+        temperature: 0.7,
+        max_tokens: 4096
       }, {
         headers: {
           'Authorization': `Bearer ${API_KEY}`,
           'Content-Type': 'application/json'
-        }
+        },
+        timeout: 60000 // 60s timeout for AI generation
       });
 
       const content = response.data.choices[0].message.content;
+      console.log('AI Response:', content);
+
       // 使用正则安全地提取包含大括号的 JSON 片段
       const jsonMatch = content.match(/\{[\s\S]*\}/);
-      if (!jsonMatch) throw new Error('AI 返回内容无法识别为合法JSON');
-      const result = JSON.parse(jsonMatch[0]);
+      if (!jsonMatch) {
+        console.error('No JSON found in AI response:', content);
+        return { success: false, msg: 'AI 返回格式错误' };
+      }
+
+      let result;
+      try {
+        // 尝试修复一些常见的 JSON 错误（如末尾逗号）
+        let jsonStr = jsonMatch[0].replace(/,\s*([\]}])/g, '$1');
+        result = JSON.parse(jsonStr);
+      } catch (parseErr) {
+        console.error('JSON Parse Error:', parseErr, 'Raw string:', jsonMatch[0]);
+        return { success: false, msg: 'AI 内容解析失败' };
+      }
+
+      // 兜底：确保 aiFullContent 存在且为数组
+      if (!result.aiFullContent) {
+        result.aiFullContent = ["内容生成中..."];
+      }
 
       return { success: true, data: result };
     }
 
     return { success: false, msg: 'Unknown action' };
   } catch (err) {
-    console.error(err);
-    return { success: false, error: err.message };
+    console.error('aiGenerator Error:', err);
+    let errorMsg = err.message;
+    if (err.response && err.response.data && err.response.data.error) {
+      errorMsg = err.response.data.error.message || errorMsg;
+    }
+    return { success: false, error: errorMsg };
   }
 };
