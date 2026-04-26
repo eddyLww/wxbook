@@ -1,0 +1,297 @@
+/* pages/login/login.wxss */
+.login-container {
+  min-height: 100vh;
+  background: var(--color-bg);
+  position: relative;
+  overflow: hidden;
+}
+
+/* 纸张纹理 */
+.paper-texture {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 39rpx, rgba(201,168,76,0.06) 40rpx),
+    repeating-linear-gradient(90deg, transparent, transparent 39rpx, rgba(201,168,76,0.04) 40rpx);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* 步骤容器切换 */
+.step-wrap {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  min-height: 100vh;
+  padding: 80rpx 48rpx 120rpx;
+  box-sizing: border-box;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  z-index: 1;
+}
+.step-wrap.show { opacity: 1; transform: translateX(0); pointer-events: auto; }
+.step-wrap.hide { opacity: 0; transform: translateX(60rpx); pointer-events: none; }
+
+/* ===== 欢迎页 ===== */
+.book-spine {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 12rpx;
+  height: 100%;
+  background: linear-gradient(to bottom, #C9A84C, #B8952F, #C9A84C);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 40rpx;
+}
+.spine-line {
+  width: 4rpx;
+  height: 60rpx;
+  background: rgba(255,255,255,0.4);
+  border-radius: 2rpx;
+}
+
+.welcome-content {
+  padding-top: 160rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.app-title {
+  font-size: 96rpx;
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: 12rpx;
+  font-family: var(--font-serif);
+  line-height: 1;
+}
+
+.app-subtitle {
+  margin-top: 20rpx;
+  font-size: 28rpx;
+  color: var(--color-brown);
+  letter-spacing: 4rpx;
+}
+
+.divider-ornament {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  margin: 60rpx 0 40rpx;
+  width: 400rpx;
+}
+.ornament-line {
+  flex: 1;
+  height: 1rpx;
+  background: var(--color-gold);
+  opacity: 0.5;
+}
+.ornament-icon {
+  color: var(--color-gold);
+  font-size: 24rpx;
+}
+
+.login-desc {
+  font-size: 28rpx;
+  color: var(--color-text-sub);
+  text-align: center;
+  margin-bottom: 80rpx;
+  line-height: 1.8;
+}
+
+.btn-wechat {
+  width: 560rpx;
+  height: 96rpx;
+  background: #07C160;
+  color: #fff;
+  border-radius: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16rpx;
+  font-size: 34rpx;
+  font-weight: 600;
+  box-shadow: 0 12rpx 32rpx rgba(7,193,96,0.35);
+  border: none;
+}
+.btn-wechat::after { border: none; }
+.btn-wechat:active { transform: scale(0.97); }
+
+.wechat-icon {
+  width: 48rpx;
+  height: 48rpx;
+}
+
+/* ===== 步骤通用 ===== */
+.step-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 24rpx;
+  margin-bottom: 56rpx;
+  padding-top: 60rpx;
+}
+.step-num {
+  font-size: 80rpx;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 700;
+  color: var(--color-gold);
+  opacity: 0.4;
+  line-height: 1;
+  margin-top: -10rpx;
+}
+.step-title {
+  font-size: 44rpx;
+  font-weight: 700;
+  color: var(--color-text);
+  display: block;
+}
+.step-hint {
+  font-size: 24rpx;
+  color: var(--color-text-sub);
+  margin-top: 8rpx;
+  display: block;
+}
+
+/* 领域标签网格 */
+.tags-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24rpx;
+  margin-bottom: 60rpx;
+}
+
+.tag-item {
+  background: var(--color-bg-card);
+  border: 2rpx solid var(--color-border);
+  border-radius: 16rpx;
+  padding: 32rpx 16rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12rpx;
+  transition: all 0.25s ease;
+  box-shadow: 0 4rpx 16rpx rgba(26,20,16,0.06);
+}
+.tag-item.tag-selected {
+  border-color: var(--color-gold);
+  background: linear-gradient(135deg, #FFF9ED, #FFF4DC);
+  box-shadow: 0 8rpx 24rpx rgba(201,168,76,0.25);
+  transform: translateY(-4rpx);
+}
+.tag-emoji { font-size: 48rpx; }
+.tag-name {
+  font-size: 26rpx;
+  color: var(--color-text);
+  font-weight: 500;
+}
+.tag-item.tag-selected .tag-name { color: #8B6914; font-weight: 600; }
+
+/* 博主列表 */
+.bloggers-list {
+  height: 780rpx;
+  margin-bottom: 40rpx;
+}
+
+.blogger-item {
+  background: var(--color-bg-card);
+  border: 2rpx solid var(--color-border);
+  border-radius: 16rpx;
+  padding: 32rpx;
+  display: flex;
+  align-items: center;
+  gap: 28rpx;
+  margin-bottom: 20rpx;
+  transition: all 0.25s ease;
+  box-shadow: 0 4rpx 16rpx rgba(26,20,16,0.06);
+}
+.blogger-item.blogger-selected {
+  border-color: var(--color-gold);
+  background: linear-gradient(135deg, #FFF9ED, #FFF4DC);
+  box-shadow: 0 8rpx 24rpx rgba(201,168,76,0.25);
+}
+
+.blogger-avatar-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+.blogger-avatar {
+  width: 112rpx;
+  height: 112rpx;
+  border-radius: 50%;
+  border: 3rpx solid var(--color-border);
+}
+.blogger-item.blogger-selected .blogger-avatar { border-color: var(--color-gold); }
+
+.check-badge {
+  position: absolute;
+  bottom: -4rpx;
+  right: -4rpx;
+  width: 36rpx;
+  height: 36rpx;
+  background: var(--color-gold);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: scale(0);
+  transition: all 0.2s ease;
+}
+.check-badge.check-show { opacity: 1; transform: scale(1); }
+.check-icon { font-size: 20rpx; color: #fff; font-weight: 700; }
+
+.blogger-info { flex: 1; min-width: 0; }
+.blogger-name {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: var(--color-text);
+  display: block;
+  margin-bottom: 8rpx;
+}
+.blogger-desc {
+  font-size: 24rpx;
+  color: var(--color-text-sub);
+  line-height: 1.6;
+  display: block;
+  margin-bottom: 12rpx;
+  /* 两行截断 */
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.blogger-tags { display: flex; flex-wrap: wrap; gap: 8rpx; }
+.blogger-tag {
+  font-size: 20rpx;
+  color: var(--color-brown);
+  background: rgba(139,115,85,0.1);
+  border-radius: 20rpx;
+  padding: 4rpx 16rpx;
+}
+
+/* 底部按钮区 */
+.step-actions {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 24rpx 48rpx;
+  padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
+  background: linear-gradient(to top, var(--color-bg) 80%, transparent);
+}
+.step-actions-row {
+  display: flex;
+  gap: 20rpx;
+  align-items: center;
+}
+.btn-back {
+  flex: 1;
+  padding: 26rpx 0;
+}
+.btn-finish {
+  flex: 2;
+}
+.btn-disabled {
+  opacity: 0.4;
+}

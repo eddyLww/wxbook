@@ -1,0 +1,103 @@
+<!-- pages/book-detail/book-detail.wxml -->
+<view class="detail-container">
+  <!-- 封面区域（视差效果） -->
+  <view class="cover-hero">
+    <image class="cover-bg" src="{{book.coverUrl || '/images/default-cover.png'}}" mode="aspectFill" />
+    <view class="cover-mask"></view>
+    <!-- 返回按钮 -->
+    <view class="nav-back" bindtap="goBack">
+      <text class="back-icon">‹</text>
+    </view>
+    <!-- 书籍信息覆盖层 -->
+    <view class="hero-content">
+      <image class="hero-cover" src="{{book.coverUrl || '/images/default-cover.png'}}" mode="aspectFill" />
+      <view class="hero-info">
+        <view class="hero-tags">
+          <text wx:for="{{book.categories}}" wx:for-item="cat" wx:key="*this" class="hero-tag">{{cat}}</text>
+        </view>
+        <text class="hero-title title-serif">{{book.title}}</text>
+        <text class="hero-author">{{book.author}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 内容区域 -->
+  <view class="detail-body">
+    <!-- 书籍简介 -->
+    <view class="desc-section" wx:if="{{book.description}}">
+      <text class="desc-label">内容简介</text>
+      <text class="desc-text {{descExpanded ? '' : 'desc-collapsed'}}" bindtap="toggleDesc">{{book.description}}</text>
+      <text class="desc-expand" bindtap="toggleDesc" wx:if="{{!descExpanded}}">展开 ∨</text>
+    </view>
+
+    <view class="divider"></view>
+
+    <!-- 选择讲书风格 -->
+    <view class="style-section">
+      <view class="style-header">
+        <text class="style-title title-serif">选择讲述风格</text>
+        <text class="style-hint">每位博主有独特的表达方式</text>
+      </view>
+
+      <scroll-view scroll-x class="bloggers-scroll" enhanced show-scrollbar="{{false}}">
+        <view class="bloggers-row">
+          <view
+            wx:for="{{bloggers}}"
+            wx:key="_id"
+            class="blogger-chip {{selectedBlogger && selectedBlogger._id === item._id ? 'chip-active' : ''}}"
+            bindtap="selectBlogger"
+            data-blogger="{{item}}"
+          >
+            <image class="chip-avatar" src="{{item.avatar || '/images/blogger-default.png'}}" mode="aspectFill" />
+            <view class="chip-info">
+              <text class="chip-name">{{item.name}}</text>
+              <text class="chip-style">{{item.styleTag || '知识讲解'}}</text>
+            </view>
+            <view class="chip-check {{selectedBlogger && selectedBlogger._id === item._id ? 'check-on' : ''}}">✓</view>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 已选风格预览 -->
+    <view class="style-preview" wx:if="{{selectedBlogger}}">
+      <view class="preview-icon">💬</view>
+      <view class="preview-content">
+        <text class="preview-name">{{selectedBlogger.name}} 的讲述风格</text>
+        <text class="preview-desc">{{selectedBlogger.stylePreview || '将按照该博主独特的讲述方式，为您精心梳理书中核心内容'}}</text>
+      </view>
+    </view>
+
+    <!-- 生成按钮 -->
+    <view class="generate-section">
+      <view
+        class="btn-generate {{!selectedBlogger || generating ? 'btn-disabled' : ''}}"
+        bindtap="generateSummary"
+      >
+        <text wx:if="{{!generating && !checking}}">✦ 生成精华书摘</text>
+        <text wx:elif="{{checking}}">检查缓存中...</text>
+        <text wx:else>AI 正在生成书摘...</text>
+      </view>
+      <text class="generate-hint">约 30 分钟阅读量 · AI 精心提炼</text>
+    </view>
+
+    <!-- 生成进度 loading -->
+    <view class="generating-overlay {{generating ? 'show' : ''}}" bindtap="preventBubble">
+      <view class="generating-card">
+        <view class="gen-animation">
+          <view class="book-anim">
+            <view class="book-page page1"></view>
+            <view class="book-page page2"></view>
+            <view class="book-page page3"></view>
+          </view>
+        </view>
+        <text class="gen-title">{{genStage}}</text>
+        <text class="gen-desc">正在以「{{selectedBlogger.name || ''}}」的风格解读《{{book.title}}》</text>
+        <view class="gen-progress">
+          <view class="gen-bar" style="width: {{genProgress}}%"></view>
+        </view>
+        <text class="gen-tip">首次生成约需 30-60 秒，生成后所有人共享</text>
+      </view>
+    </view>
+  </view>
+</view>

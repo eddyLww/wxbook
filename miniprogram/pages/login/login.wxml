@@ -1,0 +1,123 @@
+<!-- pages/login/login.wxml -->
+<view class="login-container">
+  <!-- 纸张纹理背景层 -->
+  <view class="paper-texture"></view>
+
+  <!-- 步骤 0：欢迎登录 -->
+  <view class="step-wrap {{step === 0 ? 'show' : 'hide'}}">
+    <!-- 装饰性书脊 -->
+    <view class="book-spine">
+      <view class="spine-line"></view>
+      <view class="spine-line"></view>
+      <view class="spine-line"></view>
+    </view>
+
+    <view class="welcome-content">
+      <text class="app-title title-serif">知书</text>
+      <text class="app-subtitle">用博主的声音，读最好的书</text>
+
+      <view class="divider-ornament">
+        <view class="ornament-line"></view>
+        <text class="ornament-icon">✦</text>
+        <view class="ornament-line"></view>
+      </view>
+
+      <view class="login-desc">
+        <text>每本书，都有更好的打开方式</text>
+      </view>
+
+      <button
+        class="btn-wechat"
+        bindtap="handleLogin"
+        loading="{{loginLoading}}"
+        disabled="{{loginLoading}}"
+      >
+        <image class="wechat-icon" src="/images/wechat-icon.png" mode="aspectFit" />
+        <text>微信一键登录</text>
+      </button>
+    </view>
+  </view>
+
+  <!-- 步骤 1：选择兴趣领域 -->
+  <view class="step-wrap {{step === 1 ? 'show' : 'hide'}}">
+    <view class="step-header">
+      <text class="step-num">01</text>
+      <view class="step-title-wrap">
+        <text class="step-title title-serif">选择感兴趣的领域</text>
+        <text class="step-hint">至少选择一个</text>
+      </view>
+    </view>
+
+    <view class="tags-grid">
+      <view
+        wx:for="{{categories}}"
+        wx:key="id"
+        class="tag-item {{item.selected ? 'tag-selected' : ''}}"
+        bindtap="toggleCategory"
+        data-id="{{item.id}}"
+      >
+        <text class="tag-emoji">{{item.emoji}}</text>
+        <text class="tag-name">{{item.name}}</text>
+      </view>
+    </view>
+
+    <view class="step-actions">
+      <view
+        class="btn-gold {{selectedCategories.length === 0 ? 'btn-disabled' : ''}}"
+        bindtap="nextStep"
+      >下一步</view>
+    </view>
+  </view>
+
+  <!-- 步骤 2：选择知识博主 -->
+  <view class="step-wrap {{step === 2 ? 'show' : 'hide'}}">
+    <view class="step-header">
+      <text class="step-num">02</text>
+      <view class="step-title-wrap">
+        <text class="step-title title-serif">选择喜欢的讲书人</text>
+        <text class="step-hint">每位博主有独特的讲述风格</text>
+      </view>
+    </view>
+
+    <scroll-view scroll-y class="bloggers-list">
+      <view
+        wx:for="{{bloggers}}"
+        wx:key="_id"
+        class="blogger-item {{item.selected ? 'blogger-selected' : ''}}"
+        bindtap="toggleBlogger"
+        data-id="{{item._id}}"
+      >
+        <view class="blogger-avatar-wrap">
+          <image class="blogger-avatar" src="{{item.avatar}}" mode="aspectFill" />
+          <view class="check-badge {{item.selected ? 'check-show' : ''}}">
+            <text class="check-icon">✓</text>
+          </view>
+        </view>
+        <view class="blogger-info">
+          <text class="blogger-name">{{item.name}}</text>
+          <text class="blogger-desc">{{item.description}}</text>
+          <view class="blogger-tags">
+            <text
+              wx:for="{{item.categories}}"
+              wx:for-item="cat"
+              wx:key="*this"
+              class="blogger-tag"
+            >{{cat}}</text>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+
+    <view class="step-actions step-actions-row">
+      <view class="btn-outline btn-back" bindtap="prevStep">上一步</view>
+      <view
+        class="btn-gold btn-finish {{selectedBloggers.length === 0 ? 'btn-disabled' : ''}}"
+        bindtap="finishSetup"
+        style="flex:2"
+      >
+        <text wx:if="{{!saving}}">开始阅读</text>
+        <text wx:else>保存中...</text>
+      </view>
+    </view>
+  </view>
+</view>

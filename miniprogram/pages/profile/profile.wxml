@@ -1,0 +1,91 @@
+<!-- pages/profile/profile.wxml -->
+<view class="profile-container">
+  <!-- 顶部用户信息 -->
+  <view class="profile-hero">
+    <view class="hero-bg"></view>
+    <view class="hero-content">
+      <image class="profile-avatar" src="{{userInfo.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill" />
+      <text class="profile-name">{{userInfo.nickname || '书友'}}</text>
+      <view class="profile-stats">
+        <view class="stat-item">
+          <text class="stat-num">{{readCount}}</text>
+          <text class="stat-label">已读</text>
+        </view>
+        <view class="stat-divider"></view>
+        <view class="stat-item">
+          <text class="stat-num">{{totalPages}}</text>
+          <text class="stat-label">总页数</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <scroll-view scroll-y class="profile-body">
+    <!-- 我的兴趣 -->
+    <view class="section-card">
+      <view class="card-header">
+        <text class="card-title title-serif">我的兴趣</text>
+        <text class="card-action" bindtap="goEditPreferences">修改</text>
+      </view>
+      <view class="interests-wrap">
+        <text
+          wx:for="{{interests}}"
+          wx:key="*this"
+          class="interest-tag"
+        >{{item}}</text>
+        <text wx:if="{{interests.length === 0}}" class="empty-tip">尚未设置</text>
+      </view>
+    </view>
+
+    <!-- 喜欢的博主 -->
+    <view class="section-card">
+      <view class="card-header">
+        <text class="card-title title-serif">喜欢的讲书人</text>
+        <text class="card-action" bindtap="goEditPreferences">修改</text>
+      </view>
+      <view class="bloggers-wrap">
+        <view wx:for="{{favBloggers}}" wx:key="_id" class="fav-blogger">
+          <image class="fav-avatar" src="{{item.avatar || '/images/blogger-default.png'}}" mode="aspectFill" />
+          <text class="fav-name">{{item.name}}</text>
+        </view>
+        <text wx:if="{{favBloggers.length === 0}}" class="empty-tip">尚未设置</text>
+      </view>
+    </view>
+
+    <!-- 阅读记录 -->
+    <view class="section-card">
+      <view class="card-header">
+        <text class="card-title title-serif">阅读记录</text>
+      </view>
+      <view wx:if="{{readHistory.length === 0}}" class="empty-state">
+        <text class="empty-icon">📖</text>
+        <text class="empty-text">还没有阅读记录，去书房挑一本吧</text>
+        <view class="btn-outline go-home" bindtap="goHome">去书房</view>
+      </view>
+      <view wx:else>
+        <view
+          wx:for="{{readHistory}}"
+          wx:key="summaryId"
+          class="history-item"
+          bindtap="continueReading"
+          data-item="{{item}}"
+        >
+          <image class="history-cover" src="{{item.coverUrl || '/images/default-cover.png'}}" mode="aspectFill" />
+          <view class="history-info">
+            <text class="history-title">{{item.bookTitle}}</text>
+            <text class="history-blogger">{{item.bloggerName}} 讲书</text>
+            <view class="history-progress-wrap">
+              <view class="history-progress-bar">
+                <view class="history-progress-inner" style="width: {{item.percent}}%"></view>
+              </view>
+              <text class="history-pct">{{item.percent}}%</text>
+            </view>
+          </view>
+          <text class="history-continue">继续 ›</text>
+        </view>
+      </view>
+    </view>
+
+    <view style="height: 160rpx;"></view>
+  </scroll-view>
+</view>

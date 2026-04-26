@@ -1,0 +1,31 @@
+{
+  "pages": [
+    "pages/login/login",
+    "pages/home/home",
+    "pages/book-detail/book-detail",
+    "pages/reader/reader",
+    "pages/profile/profile"
+  ],
+  "window": {
+    "backgroundTextStyle": "dark",
+    "navigationBarBackgroundColor": "#F5F0E8",
+    "navigationBarTitleText": "读书",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#F5F0E8"
+  },
+  "tabBar": {
+    "custom": true,
+    "color": "#8B7355",
+    "selectedColor": "#C9A84C",
+    "backgroundColor": "#FEFCF7",
+    "borderStyle": "white",
+    "list": [
+      { "pagePath": "pages/home/home", "text": "书房" },
+      { "pagePath": "pages/profile/profile", "text": "我的" }
+    ]
+  },
+  "usingComponents": {},
+  "cloud": true,
+  "sitemapLocation": "sitemap.json",
+  "style": "v2"
+}

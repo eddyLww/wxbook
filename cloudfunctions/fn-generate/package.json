@@ -1,0 +1,9 @@
+{
+  "name": "fn-generate",
+  "version": "1.0.0",
+  "description": "LLM书摘生成与缓存",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

@@ -1,0 +1,138 @@
+<!-- pages/reader/reader.wxml -->
+<view class="reader-container" style="background: {{bgColor}}">
+  <!-- 顶部状态栏 -->
+  <view class="reader-header {{headerVisible ? 'header-show' : 'header-hide'}}">
+    <view class="header-back" bindtap="goBack">
+      <text class="back-icon">‹</text>
+    </view>
+    <view class="header-title-wrap">
+      <text class="header-book-title">{{bookTitle}}</text>
+      <text class="header-blogger">· {{bloggerName}} 讲书</text>
+    </view>
+    <view class="header-settings" bindtap="toggleSettings">
+      <text class="settings-icon">☰</text>
+    </view>
+  </view>
+
+  <!-- 书本主体 -->
+  <view
+    class="book-body"
+    bindtouchstart="onTouchStart"
+    bindtouchmove="onTouchMove"
+    bindtouchend="onTouchEnd"
+    bindtap="onTap"
+  >
+    <!-- 书脊 -->
+    <view class="book-spine-center"></view>
+
+    <!-- 左页（当前或上一页） -->
+    <view class="book-page page-left {{pageLeftClass}}">
+      <view class="page-inner">
+        <view class="page-header">
+          <text class="chapter-title">{{leftPage.chapterTitle}}</text>
+        </view>
+        <view class="page-content">
+          <text class="content-text">{{leftPage.content}}</text>
+        </view>
+        <view class="page-footer">
+          <text class="page-num">{{leftPage.pageNo}}</text>
+        </view>
+      </view>
+      <view class="page-shadow-left"></view>
+    </view>
+
+    <!-- 右页（当前+1） -->
+    <view class="book-page page-right {{pageRightClass}}">
+      <view class="page-inner">
+        <view class="page-header">
+          <text class="chapter-title">{{rightPage.chapterTitle}}</text>
+        </view>
+        <view class="page-content">
+          <text class="content-text">{{rightPage.content}}</text>
+        </view>
+        <view class="page-footer">
+          <text class="page-num">{{rightPage.pageNo}}</text>
+        </view>
+      </view>
+      <view class="page-shadow-right"></view>
+    </view>
+
+    <!-- 翻转中的页（CSS 动画层） -->
+    <view
+      class="book-page page-turning {{turningClass}}"
+      style="{{turningStyle}}"
+      wx:if="{{isTurning}}"
+    >
+      <view class="page-front page-inner">
+        <view class="page-header">
+          <text class="chapter-title">{{turningFrontPage.chapterTitle}}</text>
+        </view>
+        <view class="page-content">
+          <text class="content-text">{{turningFrontPage.content}}</text>
+        </view>
+        <view class="page-footer">
+          <text class="page-num">{{turningFrontPage.pageNo}}</text>
+        </view>
+      </view>
+      <view class="page-back page-inner">
+        <view class="page-header">
+          <text class="chapter-title">{{turningBackPage.chapterTitle}}</text>
+        </view>
+        <view class="page-content">
+          <text class="content-text">{{turningBackPage.content}}</text>
+        </view>
+        <view class="page-footer">
+          <text class="page-num">{{turningBackPage.pageNo}}</text>
+        </view>
+      </view>
+      <!-- 翻页折叠阴影 -->
+      <view class="fold-shadow"></view>
+    </view>
+
+    <!-- 进度提示（左右点击区域指示） -->
+    <view class="tap-hint-left {{showTapHint ? 'hint-show' : ''}}" wx:if="{{currentPage > 0}}">
+      <text>‹</text>
+    </view>
+    <view class="tap-hint-right {{showTapHint ? 'hint-show' : ''}}" wx:if="{{currentPage < totalPages - 2}}">
+      <text>›</text>
+    </view>
+  </view>
+
+  <!-- 底部进度条 -->
+  <view class="reader-footer {{headerVisible ? 'footer-show' : 'footer-hide'}}">
+    <text class="progress-text">{{currentPage + 1}} / {{totalPages}}</text>
+    <view class="progress-bar-wrap">
+      <view class="progress-bar" style="width: {{progressPercent}}%"></view>
+    </view>
+    <text class="progress-pct">{{progressPercent}}%</text>
+  </view>
+
+  <!-- 设置面板 -->
+  <view class="settings-panel {{settingsVisible ? 'panel-show' : ''}}">
+    <view class="settings-mask" bindtap="toggleSettings"></view>
+    <view class="settings-content">
+      <text class="settings-title">阅读设置</text>
+      <view class="settings-row">
+        <text class="settings-label">背景色</text>
+        <view class="bg-options">
+          <view
+            wx:for="{{bgOptions}}"
+            wx:key="color"
+            class="bg-circle {{bgColor === item.color ? 'bg-active' : ''}}"
+            style="background: {{item.color}};"
+            bindtap="changeBg"
+            data-color="{{item.color}}"
+          ></view>
+        </view>
+      </view>
+      <view class="settings-row">
+        <text class="settings-label">字体大小</text>
+        <view class="font-size-ctrl">
+          <view class="fs-btn" bindtap="decreaseFontSize">A-</view>
+          <text class="fs-val">{{fontSize}}rpx</text>
+          <view class="fs-btn" bindtap="increaseFontSize">A+</view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

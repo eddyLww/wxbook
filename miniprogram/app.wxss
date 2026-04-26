@@ -1,0 +1,89 @@
+/* app.wxss — 全局样式变量与基础样式 */
+page {
+  --color-bg: #F5F0E8;
+  --color-bg-card: #FEFCF7;
+  --color-text: #1A1410;
+  --color-text-sub: #6B5B45;
+  --color-gold: #C9A84C;
+  --color-brown: #8B7355;
+  --color-border: #E8DFD0;
+  --color-shadow: rgba(26,20,16,0.12);
+  --font-serif: 'Georgia', 'Songti SC', serif;
+  --radius-card: 12rpx;
+  --radius-btn: 8rpx;
+
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: PingFang SC, 'Heiti SC', sans-serif;
+  font-size: 28rpx;
+  line-height: 1.7;
+}
+
+/* 全局滚动优化 */
+scroll-view {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 通用卡片 */
+.card {
+  background: var(--color-bg-card);
+  border-radius: var(--radius-card);
+  box-shadow: 0 4rpx 20rpx var(--color-shadow);
+}
+
+/* 金色按钮 */
+.btn-gold {
+  background: linear-gradient(135deg, #D4AA50, #C9A84C, #B8952F);
+  color: #fff;
+  border-radius: var(--radius-btn);
+  padding: 24rpx 0;
+  text-align: center;
+  font-size: 32rpx;
+  font-weight: 600;
+  letter-spacing: 4rpx;
+  box-shadow: 0 8rpx 24rpx rgba(201,168,76,0.4);
+}
+
+.btn-gold:active {
+  opacity: 0.85;
+  transform: scale(0.98);
+}
+
+/* 轻描边按钮 */
+.btn-outline {
+  border: 2rpx solid var(--color-gold);
+  color: var(--color-gold);
+  border-radius: var(--radius-btn);
+  padding: 20rpx 0;
+  text-align: center;
+  font-size: 30rpx;
+}
+
+/* 分割线 */
+.divider {
+  width: 100%;
+  height: 1rpx;
+  background: var(--color-border);
+  margin: 24rpx 0;
+}
+
+/* 标题字体 */
+.title-serif {
+  font-family: var(--font-serif);
+  font-weight: 700;
+}
+
+/* 装饰性下划线 */
+.underline-gold {
+  position: relative;
+}
+.underline-gold::after {
+  content: '';
+  position: absolute;
+  bottom: -6rpx;
+  left: 0;
+  width: 100%;
+  height: 4rpx;
+  background: var(--color-gold);
+  border-radius: 2rpx;
+}

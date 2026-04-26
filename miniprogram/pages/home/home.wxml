@@ -1,0 +1,142 @@
+<!-- pages/home/home.wxml -->
+<view class="home-container">
+  <!-- 顶部 Header -->
+  <view class="home-header">
+    <view class="header-left">
+      <text class="greeting">{{greeting}}</text>
+      <text class="header-title title-serif">今日书房</text>
+    </view>
+    <view class="header-right" bindtap="goProfile">
+      <image class="user-avatar" src="{{userAvatar}}" mode="aspectFill" />
+    </view>
+  </view>
+
+  <!-- 搜索栏 -->
+  <view class="search-bar-wrap">
+    <view class="search-bar">
+      <text class="search-icon">🔍</text>
+      <input
+        class="search-input"
+        placeholder="搜索书名、作者..."
+        placeholder-style="color:#B5A48A;font-size:28rpx;"
+        bindinput="onSearchInput"
+        value="{{searchKeyword}}"
+        confirm-type="search"
+        bindconfirm="doSearch"
+      />
+      <text class="search-clear {{searchKeyword ? 'show' : ''}}" bindtap="clearSearch">×</text>
+    </view>
+  </view>
+
+  <!-- 搜索结果 -->
+  <view class="search-results" wx:if="{{searchKeyword && !searching}}">
+    <view class="section-label">搜索结果 · {{searchResults.length}} 本</view>
+    <view wx:if="{{searchResults.length === 0}}" class="empty-hint">
+      <text>暂无结果，换个关键词试试</text>
+    </view>
+    <view
+      wx:for="{{searchResults}}"
+      wx:key="_id"
+      class="book-list-item"
+      bindtap="goBookDetail"
+      data-book="{{item}}"
+    >
+      <image class="book-cover-sm" src="{{item.coverUrl || '/images/default-cover.png'}}" mode="aspectFill" />
+      <view class="book-list-info">
+        <text class="book-list-title">{{item.title}}</text>
+        <text class="book-list-author">{{item.author}}</text>
+        <view class="book-list-tags">
+          <text wx:for="{{item.categories}}" wx:for-item="cat" wx:key="*this" class="book-list-tag">{{cat}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 正常浏览内容 -->
+  <scroll-view
+    scroll-y
+    class="home-scroll"
+    wx:if="{{!searchKeyword}}"
+    refresher-enabled
+    bindrefresherrefresh="onRefresh"
+    refresher-triggered="{{refreshing}}"
+    bindscrolltolower="loadMore"
+  >
+    <!-- 精选大卡（第一本书） -->
+    <view class="featured-section" wx:if="{{featuredBook}}">
+      <view class="section-header">
+        <text class="section-title title-serif">今日精选</text>
+        <view class="section-ornament"></view>
+      </view>
+      <view class="featured-card" bindtap="goBookDetail" data-book="{{featuredBook}}">
+        <image class="featured-cover" src="{{featuredBook.coverUrl || '/images/default-cover.png'}}" mode="aspectFill" />
+        <view class="featured-overlay">
+          <view class="featured-categories">
+            <text wx:for="{{featuredBook.categories}}" wx:for-item="cat" wx:key="*this" class="featured-tag">{{cat}}</text>
+          </view>
+          <text class="featured-title title-serif">{{featuredBook.title}}</text>
+          <text class="featured-author">{{featuredBook.author}}</text>
+          <view class="featured-action">
+            <text>选择博主讲书</text>
+            <text class="arrow">→</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 为你推荐 -->
+    <view class="recommend-section">
+      <view class="section-header">
+        <text class="section-title title-serif">为你推荐</text>
+        <view class="section-ornament"></view>
+      </view>
+
+      <!-- 骨架屏 -->
+      <view class="skeleton-grid" wx:if="{{loading}}">
+        <view class="skeleton-card" wx:for="{{[1,2,3,4,5,6]}}" wx:key="*this">
+          <view class="sk-cover"></view>
+          <view class="sk-line sk-line-1"></view>
+          <view class="sk-line sk-line-2"></view>
+        </view>
+      </view>
+
+      <!-- 书籍网格：不对称杂志布局 -->
+      <view class="books-grid" wx:else>
+        <view
+          wx:for="{{recommendBooks}}"
+          wx:key="_id"
+          class="book-card {{index % 5 === 0 ? 'book-card-wide' : ''}} {{index % 7 === 3 ? 'book-card-tilt' : ''}}"
+          bindtap="goBookDetail"
+          data-book="{{item}}"
+          style="animation-delay: {{index * 0.05}}s"
+        >
+          <view class="book-cover-wrap">
+            <image class="book-cover" src="{{item.coverUrl || '/images/default-cover.png'}}" mode="aspectFill" lazy-load />
+            <view class="book-hot" wx:if="{{item.hotScore >= 90}}">
+              <text>热</text>
+            </view>
+          </view>
+          <view class="book-info">
+            <text class="book-title">{{item.title}}</text>
+            <text class="book-author">{{item.author}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 加载更多 -->
+      <view class="load-more-indicator" wx:if="{{loadingMore}}">
+        <view class="loading-dots">
+          <view class="dot"></view>
+          <view class="dot"></view>
+          <view class="dot"></view>
+        </view>
+      </view>
+      <view class="no-more" wx:if="{{noMore && !loading}}">
+        <text>— 已加载全部书目 —</text>
+      </view>
+    </view>
+
+    <!-- 底部安全区 -->
+    <view style="height: 160rpx;"></view>
+  </scroll-view>
+</view>
