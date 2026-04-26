@@ -1,0 +1,20 @@
+<!-- miniprogram/pages/order/order.wxml -->
+<view class="container">
+  <view class="order-list">
+    <view class="order-item card" wx:for="{{orders}}" wx:key="_id">
+      <view class="order-header">
+        <text class="order-no">订单号: {{item._id}}</text>
+        <text class="order-status {{item.status === 'SUCCESS' ? 'success' : ''}}">{{item.status === 'SUCCESS' ? '已完成' : '处理中'}}</text>
+      </view>
+      <view class="order-body">
+        <text class="order-desc">{{item.orderType === 'SINGLE_BOOK' ? '解锁单本AI精读' : (item.orderType === 'VIP_MONTH' ? '月度会员' : '年度会员')}}</text>
+        <text class="order-price">¥{{item.amount / 100}}</text>
+      </view>
+      <view class="order-footer">
+        <text class="order-time">{{item.createTimeStr}}</text>
+      </view>
+    </view>
+    <view class="empty-status" wx:if="{{orders.length === 0 && !loading}}">暂无订单记录</view>
+    <view class="loading-status" wx:if="{{loading}}">加载中...</view>
+  </view>
+</view>

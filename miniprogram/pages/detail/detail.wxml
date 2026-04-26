@@ -1,0 +1,58 @@
+<!-- miniprogram/pages/detail/detail.wxml -->
+<view class="container" wx:if="{{!loading}}">
+  <view class="header-section">
+    <image class="bg-blur" src="{{book.cover}}" mode="aspectFill"></image>
+    <view class="header-content">
+      <view class="book-cover-container">
+        <image class="book-cover" src="{{book.cover}}" mode="aspectFill"></image>
+        <view class="cover-placeholder" wx:if="{{!book.cover}}">{{book.title}}</view>
+      </view>
+      <view class="book-info">
+        <text class="book-title title-serif">{{book.title}}</text>
+        <text class="book-author">{{book.author}}</text>
+        <view class="tags">
+          <text class="tag">{{book.category || '正在分类...'}}</text>
+          <text class="tag ai-tag" wx:if="{{aiLoading}}">AI 解析中</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="content-section">
+    <!-- 原书简介 -->
+    <view class="block">
+      <view class="block-title title-serif">原书简介</view>
+      <text class="block-text">{{book.briefIntro}}</text>
+    </view>
+
+    <view class="divider"></view>
+
+    <!-- AI精简摘要 (免费看) -->
+    <view class="block ai-block" bindtap="onReadFree">
+      <view class="block-title title-serif">
+        <text class="ai-icon">AI</text> 精读摘要 (点击阅读全文)
+      </view>
+      <text class="block-text ai-text">{{book.aiShortSummary}}</text>
+    </view>
+  </view>
+
+  <!-- 底部悬浮操作栏 -->
+  <view class="footer-bar">
+    <view class="action-icons">
+      <view class="icon-item" bindtap="toggleCollect">
+        <icon type="{{isCollected ? 'success' : 'circle'}}" size="24" color="#8B7355"></icon>
+        <text>{{isCollected ? '已收藏' : '收藏'}}</text>
+      </view>
+    </view>
+    <view class="action-btns">
+      <button class="btn-free" bindtap="onReadFree" wx:if="{{freeCount > 0}}">免费精读 (余{{freeCount}}次)</button>
+      <button class="btn-ad" bindtap="onWatchAd" wx:if="{{freeCount <= 0 && !isVip}}">看视频解锁</button>
+      <button class="btn-gold-pay" bindtap="onPaySingle" wx:if="{{freeCount <= 0 && !isVip}}">¥3 解锁本书</button>
+      <button class="btn-gold-pay" bindtap="onReadFree" wx:if="{{isVip}}">VIP免费精读</button>
+    </view>
+  </view>
+</view>
+
+<view class="loading-full" wx:if="{{loading}}">
+  <text class="loading-text">正在通过AI生成精读内容...</text>
+</view>

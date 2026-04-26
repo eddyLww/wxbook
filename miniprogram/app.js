@@ -2,7 +2,7 @@
 App({
   globalData: {
     userInfo: null,
-    envId: 'ai-native-d5gmlaatiacab24cc'
+    envId: 'cloud1-d6g0lfx5q68825c68'
   },
 
   onLaunch() {
@@ -10,7 +10,7 @@ App({
       console.error('请使用 2.2.3 或以上的基础库以使用云能力');
     } else {
       wx.cloud.init({
-        env: 'ai-native-d5gmlaatiacab24cc',
+        env: 'cloud1-d6g0lfx5q68825c68',
         traceUser: true
       });
     }

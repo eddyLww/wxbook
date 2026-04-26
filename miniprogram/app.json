@@ -1,27 +1,32 @@
 {
   "pages": [
-    "pages/login/login",
-    "pages/home/home",
-    "pages/book-detail/book-detail",
-    "pages/reader/reader",
-    "pages/profile/profile"
+    "pages/index/index",
+    "pages/detail/detail",
+    "pages/read/read",
+    "pages/mine/mine",
+    "pages/order/order"
   ],
   "window": {
     "backgroundTextStyle": "dark",
     "navigationBarBackgroundColor": "#F5F0E8",
-    "navigationBarTitleText": "读书",
+    "navigationBarTitleText": "AI精读",
     "navigationBarTextStyle": "black",
     "backgroundColor": "#F5F0E8"
   },
   "tabBar": {
-    "custom": true,
     "color": "#8B7355",
     "selectedColor": "#C9A84C",
     "backgroundColor": "#FEFCF7",
     "borderStyle": "white",
     "list": [
-      { "pagePath": "pages/home/home", "text": "书房" },
-      { "pagePath": "pages/profile/profile", "text": "我的" }
+      {
+        "pagePath": "pages/index/index",
+        "text": "书房"
+      },
+      {
+        "pagePath": "pages/mine/mine",
+        "text": "我的"
+      }
     ]
   },
   "usingComponents": {},

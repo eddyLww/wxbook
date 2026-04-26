@@ -1,0 +1,161 @@
+/* miniprogram/pages/mine/mine.wxss */
+.container {
+  padding: 30rpx;
+}
+
+.user-info-section {
+  display: flex;
+  align-items: center;
+  margin-bottom: 50rpx;
+  padding: 20rpx 10rpx;
+}
+
+.avatar-wrapper {
+  padding: 0;
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 60rpx;
+  margin: 0;
+  margin-right: 30rpx;
+  background: none;
+}
+.avatar-wrapper::after {
+  border: none;
+}
+
+.avatar {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 60rpx;
+}
+
+.user-detail {
+  flex: 1;
+}
+
+.nickname {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: var(--color-text);
+  margin-bottom: 10rpx;
+}
+
+.user-id {
+  font-size: 24rpx;
+  color: var(--color-text-sub);
+}
+
+.vip-card {
+  background: linear-gradient(135deg, #1A1410, #3A2F25);
+  color: #D4AA50;
+  padding: 40rpx;
+  margin-bottom: 40rpx;
+}
+
+.vip-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.vip-title {
+  font-size: 36rpx;
+  font-weight: bold;
+}
+
+.vip-expire {
+  font-size: 24rpx;
+}
+
+.vip-desc {
+  font-size: 24rpx;
+  color: rgba(212,170,80,0.7);
+  margin-top: 10rpx;
+}
+
+.vip-plans {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 40rpx;
+}
+
+.plan-item {
+  width: 48%;
+  background: rgba(255,255,255,0.1);
+  border-radius: 12rpx;
+  padding: 30rpx 0;
+  text-align: center;
+  position: relative;
+}
+
+.plan-item.highlight {
+  background: linear-gradient(135deg, rgba(212,170,80,0.2), rgba(201,168,76,0.4));
+  border: 2rpx solid #D4AA50;
+}
+
+.plan-tag {
+  position: absolute;
+  top: -16rpx;
+  right: -10rpx;
+  background: #E63F00;
+  color: #fff;
+  font-size: 20rpx;
+  padding: 4rpx 12rpx;
+  border-radius: 16rpx 16rpx 16rpx 0;
+}
+
+.plan-name {
+  display: block;
+  font-size: 28rpx;
+  margin-bottom: 10rpx;
+}
+
+.plan-price {
+  display: block;
+  font-size: 40rpx;
+  font-weight: bold;
+}
+
+.quota-section {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 40rpx;
+}
+
+.quota-box {
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 30rpx 60rpx;
+  text-align: center;
+  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.05);
+}
+
+.quota-num {
+  display: block;
+  font-size: 48rpx;
+  font-weight: bold;
+  color: var(--color-brown);
+}
+
+.quota-label {
+  display: block;
+  font-size: 24rpx;
+  color: var(--color-text-sub);
+  margin-top: 10rpx;
+}
+
+.menu-list {
+  padding: 0 30rpx;
+}
+
+.menu-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30rpx 0;
+}
+
+.menu-text {
+  font-size: 28rpx;
+  color: var(--color-text);
+}

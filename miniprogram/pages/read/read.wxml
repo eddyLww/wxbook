@@ -1,0 +1,44 @@
+<!-- miniprogram/pages/read/read.wxml -->
+<view class="read-container" style="background-color: {{theme === 'dark' ? '#1A1410' : '#F5F0E8'}}" wx:if="{{!loading}}">
+  <!-- 自定义导航栏 -->
+  <view class="custom-nav" style="padding-top: {{statusBarHeight}}px">
+    <view class="nav-back" bindtap="goBack">
+      <icon type="cancel" size="24" color="{{theme === 'dark' ? '#999' : '#333'}}"></icon>
+    </view>
+    <view class="nav-title" style="color: {{theme === 'dark' ? '#E8DFD0' : '#1A1410'}}">{{book.title}}</view>
+    <view class="nav-actions">
+      <view class="theme-toggle" bindtap="toggleTheme">
+        <text style="color: {{theme === 'dark' ? '#E8DFD0' : '#1A1410'}}">{{theme === 'dark' ? '日间' : '夜间'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <swiper class="read-swiper" current="{{currentIndex}}" bindchange="onSwiperChange">
+    <swiper-item wx:for="{{book.aiFullContent}}" wx:key="index">
+      <scroll-view class="page-scroll" scroll-y>
+        <view class="page-content" style="color: {{theme === 'dark' ? '#E8DFD0' : '#1A1410'}}">
+          <text class="page-text" style="font-size: {{fontSize}}rpx;">{{item}}</text>
+        </view>
+        <view class="page-footer">
+          <text>{{index + 1}} / {{book.aiFullContent.length}}</text>
+        </view>
+      </scroll-view>
+    </swiper-item>
+    
+    <!-- 最后一页广告 -->
+    <swiper-item>
+      <view class="ad-page">
+        <text class="ad-tips">阅读完毕</text>
+        <!-- 这里占位信息流广告，需申请流量主 -->
+        <view class="ad-placeholder">
+          <text>（此处为微信信息流广告位）</text>
+        </view>
+        <button class="btn-outline finish-btn" bindtap="goBack">返回书房</button>
+      </view>
+    </swiper-item>
+  </swiper>
+</view>
+
+<view class="loading-full" wx:if="{{loading}}">
+  <text class="loading-text">正在开启精读篇章...</text>
+</view>

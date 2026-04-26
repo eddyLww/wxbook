@@ -1,0 +1,55 @@
+<!-- miniprogram/pages/mine/mine.wxml -->
+<view class="container">
+  <!-- 用户信息区 -->
+  <view class="user-info-section">
+    <button class="avatar-wrapper" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
+      <image class="avatar" src="{{userInfo.avatarUrl || 'https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0'}}"></image>
+    </button>
+    <view class="user-detail">
+      <input type="nickname" class="nickname" value="{{userInfo.nickName || '点击设置昵称'}}" bindblur="onInputNickname" />
+      <text class="user-id" wx:if="{{openid}}">ID: {{openid}}</text>
+    </view>
+  </view>
+
+  <!-- VIP卡片 -->
+  <view class="vip-card card">
+    <view class="vip-header">
+      <text class="vip-title">{{isVip ? '您是尊贵的VIP会员' : '开通VIP会员'}}</text>
+      <text class="vip-expire" wx:if="{{isVip}}">{{vipExpireTime}} 到期</text>
+    </view>
+    <view class="vip-desc" wx:if="{{!isVip}}">解锁全部AI精读内容，尊享无广告体验</view>
+    
+    <view class="vip-plans" wx:if="{{!isVip}}">
+      <view class="plan-item" bindtap="onPayVip" data-type="VIP_MONTH">
+        <text class="plan-name">连续包月</text>
+        <text class="plan-price">¥12</text>
+      </view>
+      <view class="plan-item highlight" bindtap="onPayVip" data-type="VIP_YEAR">
+        <view class="plan-tag">限时特惠</view>
+        <text class="plan-name">年度会员</text>
+        <text class="plan-price">¥98</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 每日免费次数额度 -->
+  <view class="quota-section">
+    <view class="quota-box">
+      <text class="quota-num">{{freeCount}}</text>
+      <text class="quota-label">今日免费次数</text>
+    </view>
+  </view>
+
+  <!-- 菜单列表 -->
+  <view class="menu-list card">
+    <view class="menu-item" bindtap="goToOrder">
+      <text class="menu-text">我的订单</text>
+      <icon type="arrow" size="14" color="#ccc"></icon>
+    </view>
+    <view class="divider"></view>
+    <view class="menu-item" bindtap="contactCustomerService">
+      <text class="menu-text">联系客服</text>
+      <icon type="arrow" size="14" color="#ccc"></icon>
+    </view>
+  </view>
+</view>

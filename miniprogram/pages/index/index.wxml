@@ -1,0 +1,58 @@
+<!-- miniprogram/pages/index/index.wxml -->
+<view class="container">
+  <!-- 搜索区 -->
+  <view class="search-section">
+    <view class="search-box">
+      <icon type="search" size="18" color="#8B7355"></icon>
+      <input class="search-input" placeholder="输入书名、作者搜一搜" bindconfirm="onSearch" confirm-type="search"/>
+    </view>
+  </view>
+
+  <!-- Banner (后续接入流量主) -->
+  <view class="banner-section">
+    <swiper class="banner-swiper" circular autoplay indicator-dots indicator-active-color="#C9A84C">
+      <swiper-item wx:for="{{banners}}" wx:key="id">
+        <image class="banner-img" src="{{item.image}}" mode="aspectFill"></image>
+      </swiper-item>
+    </swiper>
+  </view>
+
+  <!-- 为你推荐 -->
+  <view class="recommend-section">
+    <view class="section-header">
+      <text class="title-serif underline-gold">为你推荐</text>
+    </view>
+    <scroll-view class="recommend-scroll" scroll-x enable-flex>
+      <view class="book-card-small" wx:for="{{recommendBooks}}" wx:key="_id" bindtap="goToDetail" data-id="{{item._id}}">
+        <image class="book-cover-small" src="{{item.cover}}" mode="aspectFill"></image>
+        <text class="book-title-small" style="-webkit-line-clamp: 1;">{{item.title}}</text>
+        <text class="book-author-small">{{item.author}}</text>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 热门精读 -->
+  <view class="hot-section">
+    <view class="section-header">
+      <text class="title-serif underline-gold">热门精读</text>
+    </view>
+    <view class="book-list">
+      <view class="book-item card" wx:for="{{hotBooks}}" wx:key="_id" bindtap="goToDetail" data-id="{{item._id}}">
+        <image class="book-cover" src="{{item.cover}}" mode="aspectFill"></image>
+        <view class="book-info">
+          <text class="book-title title-serif">{{item.title}}</text>
+          <text class="book-author">{{item.author}}</text>
+          <text class="book-desc">{{item.briefIntro}}</text>
+          <view class="book-meta">
+            <text class="book-category">{{item.category}}</text>
+            <text class="book-view">{{item.viewCount || 0}} 人阅读</text>
+          </view>
+        </view>
+      </view>
+      
+      <!-- 加载提示 -->
+      <view class="loading-status" wx:if="{{loading}}">正在加载...</view>
+      <view class="empty-status" wx:if="{{!loading && hotBooks.length === 0}}">暂无书籍</view>
+    </view>
+  </view>
+</view>

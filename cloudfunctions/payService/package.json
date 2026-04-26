@@ -1,0 +1,9 @@
+{
+  "name": "payService",
+  "version": "1.0.0",
+  "description": "Pay Service Cloud Function",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

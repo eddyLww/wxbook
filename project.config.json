@@ -48,7 +48,7 @@
   "cloudfunctionRoot": "cloudfunctions/",
   "cloudfunctionTemplateRoot": "cloudfunctionTemplate/",
   "cloudbaseRoot": ".cloudbase/",
-  "cloudbaseEnv": "ai-native-d5gmlaatiacab24cc",
+  "cloudbaseEnv": "cloud1-d6g0lfx5q68825c68",
   "simulatorPluginLibVersion": {},
   "packOptions": {
     "ignore": [],

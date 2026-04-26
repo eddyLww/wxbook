@@ -1,0 +1,67 @@
+/* miniprogram/pages/order/order.wxss */
+.container {
+  padding: 30rpx;
+}
+
+.order-item {
+  padding: 30rpx;
+  margin-bottom: 30rpx;
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+  border-bottom: 1rpx solid var(--color-border);
+  padding-bottom: 20rpx;
+}
+
+.order-no {
+  font-size: 24rpx;
+  color: var(--color-text-sub);
+}
+
+.order-status {
+  font-size: 24rpx;
+  color: #E63F00;
+}
+
+.order-status.success {
+  color: #07C160;
+}
+
+.order-body {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.order-desc {
+  font-size: 32rpx;
+  color: var(--color-text);
+  font-weight: bold;
+}
+
+.order-price {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: var(--color-gold);
+}
+
+.order-footer {
+  text-align: right;
+}
+
+.order-time {
+  font-size: 22rpx;
+  color: #999;
+}
+
+.empty-status, .loading-status {
+  text-align: center;
+  color: #999;
+  font-size: 28rpx;
+  margin-top: 100rpx;
+}
