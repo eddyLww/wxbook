@@ -9,6 +9,7 @@ const db = cloud.database();
 const _ = db.command;
 
 exports.main = async (event, context) => {
+  context.callbackWaitsForEmptyEventLoop = false;
   const { action, data } = event;
 
   try {
@@ -54,53 +55,55 @@ exports.main = async (event, context) => {
       }
 
       if (cacheRes.data.length > 0) {
-        // Increment view count
-        await db.collection('bookCache').doc(bookId).update({ data: { viewCount: _.inc(1) } });
-        return { success: true, data: cacheRes.data[0] };
-      }
-
-      // 2. Not in cache, call aiGenerator
-      const aiRes = await cloud.callFunction({
-        name: 'aiGenerator',
-        data: {
-          action: 'generateSummary',
-          data: { title: bookInfo.title, author: bookInfo.author }
+        const cachedBook = cacheRes.data[0];
+        // 确保缓存的数据包含 aiFullContent 才直接返回，否则重新生成
+        if (cachedBook.aiFullContent && cachedBook.aiFullContent.length > 0) {
+          if (cachedBook.aiFullContent[0] === '内容生成中...') {
+            // 检查锁是否过期（防止云函数崩溃导致的死锁）
+            const lastUpdate = cachedBook.lastUpdate ? new Date(cachedBook.lastUpdate).getTime() : 0;
+            const now = new Date().getTime();
+            if (lastUpdate > 0 && now - lastUpdate > 150000) { // 150秒过期
+              console.log('Lock expired for book:', bookId);
+              return { success: true, needsGeneration: true, baseBookData: cachedBook };
+            }
+            return { success: true, isGenerating: true, baseBookData: cachedBook };
+          }
+          // Increment view count
+          await db.collection('bookCache').doc(bookId).update({
+            viewCount: _.inc(1)
+          });
+          return { success: true, data: cachedBook };
         }
-      });
-
-      if (!aiRes.result.success) {
-        return { success: false, msg: 'AI生成失败' };
       }
 
-      const generated = aiRes.result.data;
-
-      // 生成一个更精美的渐变封面图 (使用随机色)
+      // 1.5 写入生成状态互斥锁
       const colors = ['#8B7355', '#5D4037', '#2C3E50', '#1A5276', '#1D8348'];
       const randomColor = colors[Math.floor(Math.random() * colors.length)];
       const defaultCover = `https://singlecolorimage.com/get/${randomColor.replace('#', '')}/400x600`;
-      
-      const newBook = {
-        _id: bookId,
+
+      const baseBookData = {
         title: bookInfo.title,
-        author: bookInfo.author || generated.author || '未知',
+        author: bookInfo.author || '未知',
         cover: bookInfo.cover && !bookInfo.cover.includes('dummyimage') ? bookInfo.cover : defaultCover,
-        category: generated.category || '综合',
-        briefIntro: generated.briefIntro,
-        aiShortSummary: generated.aiShortSummary,
-        aiFullContent: generated.aiFullContent,
+        category: '综合',
         viewCount: 1,
         createTime: db.serverDate()
       };
 
-      // 3. Save to cache
       try {
-        await db.collection('bookCache').doc(bookId).set({ data: newBook });
+        await db.collection('bookCache').doc(bookId).set({
+          ...baseBookData,
+          briefIntro: '正在深度分析本书并生成精读摘要，请稍候...',
+          aiShortSummary: '分析中...',
+          aiFullContent: ['内容生成中...'],
+          lastUpdate: db.serverDate()
+        });
       } catch (err) {
-        console.error('Save to cache failed:', err);
-        // Even if save fails, we can still return the content to user
+        console.error('Write lock failed:', err);
       }
 
-      return { success: true, data: newBook };
+      // 交给前端去异步触发 aiGenerator，避免云函数间调用超时和事件循环挂起问题
+      return { success: true, needsGeneration: true, baseBookData };
 
     } else if (action === 'getRecommend') {
        const { category } = data;

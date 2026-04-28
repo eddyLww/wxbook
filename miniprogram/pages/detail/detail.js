@@ -13,6 +13,9 @@ Page({
     aiLoading: false
   },
 
+  pollTimer: null,
+  pollCount: 0,
+
   onLoad(options) {
     if (options.id) {
       this.setData({ bookId: options.id });
@@ -24,6 +27,13 @@ Page({
 
   onShow() {
     this.fetchUserInfo();
+  },
+
+  onUnload() {
+    if (this.pollTimer) {
+      clearTimeout(this.pollTimer);
+      this.pollTimer = null;
+    }
   },
 
   async fetchUserInfo() {
@@ -97,10 +107,18 @@ Page({
         }
       });
       if (res.result.success) {
-        this.setData({ book: res.result.data, loading: false, aiLoading: false });
+        if (res.result.isGenerating) {
+          this.setData({ aiLoading: true, loading: false });
+          this.pollGeneratingStatus(bookId, bookInfo);
+        } else if (res.result.needsGeneration) {
+          this.setData({ aiLoading: true, loading: false });
+          this.pollGeneratingStatus(bookId, bookInfo);
+          this.triggerAiGeneration(bookId, bookInfo, res.result.baseBookData);
+        } else {
+          this.setData({ book: res.result.data, loading: false, aiLoading: false });
+        }
       } else {
         wx.showToast({ title: res.result.msg || 'AI 解读失败', icon: 'none' });
-        // 如果原本是 placeholder 模式，失败后应该重置或允许重试
         this.setData({ 
           loading: false, 
           aiLoading: false,
@@ -108,8 +126,98 @@ Page({
         });
       }
     } catch(err) {
-      this.setData({ loading: false, aiLoading: false });
+      console.error('fetchBookDetail error:', err);
+      // 请求超时很可能是后端还在生成中，启动静默轮询
+      this.setData({ aiLoading: true, loading: false });
+      this.pollGeneratingStatus(bookId, bookInfo);
     }
+  },
+
+  triggerAiGeneration(bookId, bookInfo, baseBookData) {
+    // 客户端直接触发 AI 生成，避免云端 3 秒限制，单独配置 300 秒超时
+    wx.cloud.callFunction({
+      name: 'aiGenerator',
+      data: { 
+        action: 'generateSummary', 
+        data: { 
+          title: bookInfo ? bookInfo.title : '加载中', 
+          author: bookInfo ? bookInfo.author : '', 
+          bookId, 
+          baseBookData
+        } 
+      },
+      config: {
+        env: wx.cloud.DYNAMIC_CURRENT_ENV,
+        timeout: 300000
+      }
+    }).catch(err => {
+      // 捕获客户端超时错误。由于我们有轮询机制，客户端超时不代表生成失败
+      if (err.errMsg && (err.errMsg.includes('timeout') || err.errMsg.includes('deadline'))) {
+        console.log('AI 生成任务已在云端启动，正在后台处理中...');
+      } else {
+        console.error('aiGenerator call error:', err);
+      }
+    });
+  },
+
+  pollGeneratingStatus(bookId, bookInfo) {
+    if (this.pollTimer) {
+      clearTimeout(this.pollTimer);
+    }
+    
+    // 轮询上限，100 次，每次 3 秒，总共 300 秒。
+    if (this.pollCount > 100) {
+      wx.showToast({ title: '生成时间过长，请稍后重试', icon: 'none' });
+      this.setData({ 
+        loading: false, 
+        aiLoading: false,
+        book: bookInfo ? { ...bookInfo, aiShortSummary: 'AI 生成时间过长，请重试' } : null
+      });
+      this.pollCount = 0;
+      return;
+    }
+
+    this.pollCount++;
+    this.pollTimer = setTimeout(async () => {
+      try {
+        const res = await wx.cloud.callFunction({
+          name: 'bookService',
+          data: { 
+            action: 'getBookDetail', 
+            data: { bookId, bookInfo: bookInfo || { title: '加载中' } } 
+          }
+        });
+
+        if (res.result.success) {
+          if (res.result.isGenerating) {
+            // 继续轮询
+            this.pollGeneratingStatus(bookId, bookInfo);
+          } else if (res.result.needsGeneration) {
+            // 如果轮询中发现需要重新生成（可能是之前的锁过期了），则重新触发一次生成
+            console.log('Regenerating during polling...');
+            this.triggerAiGeneration(bookId, bookInfo, res.result.baseBookData);
+            this.pollGeneratingStatus(bookId, bookInfo);
+          } else {
+            // 成功拿到了最终结果
+            this.setData({ book: res.result.data, loading: false, aiLoading: false });
+            this.pollCount = 0;
+          }
+        } else {
+          // 生成失败
+          wx.showToast({ title: res.result.msg || 'AI 解读失败', icon: 'none' });
+          this.setData({ 
+            loading: false, 
+            aiLoading: false,
+            book: bookInfo ? { ...bookInfo, aiShortSummary: 'AI 解读暂时不可用，请稍后再试' } : null
+          });
+          this.pollCount = 0;
+        }
+      } catch (err) {
+        // 请求再次异常（例如又超时了），继续轮询
+        console.error('polling error:', err);
+        this.pollGeneratingStatus(bookId, bookInfo);
+      }
+    }, 3000);
   },
 
   async toggleCollect() {

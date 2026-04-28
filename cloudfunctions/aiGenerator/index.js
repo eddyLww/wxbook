@@ -15,7 +15,8 @@ exports.main = async (event, context) => {
 
   try {
     if (action === 'generateSummary') {
-      const { title, author } = data;
+      const { title, author, bookId, baseBookData } = data;
+      const db = cloud.database();
       
       const prompt = `你是一个极具洞察力的千万级粉丝读书博主。请为书籍《${title}》（作者：${author}）生成一份深度且详细的解读报告。
 请务必返回合法的JSON格式，包含以下字段：
@@ -33,7 +34,7 @@ exports.main = async (event, context) => {
 }
 要求：
 1. aiFullContent必须是一个长度为5的字符串数组。
-2. 内容要生动自然，每段长度在300字左右。
+2. 内容要生动自然，每段长度在200字左右，总字数控制在1000字左右。
 3. 每段开头带有章节标题。
 请确保直接返回纯JSON文本，不要带有Markdown标记。`;
 
@@ -64,7 +65,7 @@ exports.main = async (event, context) => {
           'Authorization': `Bearer ${API_KEY}`,
           'Content-Type': 'application/json'
         },
-        timeout: 60000 // 60s timeout for AI generation
+        timeout: 280000 // 280s timeout for AI generation
       });
 
       const content = response.data.choices[0].message.content;
@@ -92,6 +93,26 @@ exports.main = async (event, context) => {
         result.aiFullContent = ["内容生成中..."];
       }
 
+      const newBook = {
+        ...(baseBookData || {}),
+        author: author || result.author || '未知',
+        category: result.category || '综合',
+        briefIntro: result.briefIntro,
+        aiShortSummary: result.aiShortSummary,
+        aiFullContent: result.aiFullContent
+      };
+
+      if (bookId) {
+        try {
+          await db.collection('bookCache').doc(bookId).set({ 
+            ...newBook,
+            lastUpdate: db.serverDate() 
+          });
+        } catch (err) {
+          console.error('Save to cache failed in aiGenerator:', err);
+        }
+      }
+
       return { success: true, data: result };
     }
 
@@ -102,6 +123,16 @@ exports.main = async (event, context) => {
     if (err.response && err.response.data && err.response.data.error) {
       errorMsg = err.response.data.error.message || errorMsg;
     }
+
+    if (action === 'generateSummary' && data && data.bookId) {
+      try {
+        const db = cloud.database();
+        await db.collection('bookCache').doc(data.bookId).remove();
+      } catch (e) {
+        console.error('Failed to remove lock on error:', e);
+      }
+    }
+
     return { success: false, error: errorMsg };
   }
 };
